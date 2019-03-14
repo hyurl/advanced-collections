@@ -345,7 +345,7 @@ class SortedMap extends BaseMap {
             if (index === -1) {
                 this[keys].unshift(key);
                 this[values].unshift(value);
-            } else if (index === Infinity) {
+            } else if (index === this.size) {
                 this[keys].push(key);
                 this[values].push(value);
             } else {
@@ -429,7 +429,7 @@ class SortedSet {
 
             if (index === -1) {
                 this[values].unshift(value);
-            } else if (index === Infinity) {
+            } else if (index === this.size) {
                 this[values].push(value);
             } else {
                 this[values].splice(index, 0, value);
@@ -596,7 +596,7 @@ function throwNotIterableError(input) {
 
 /**
  * @param {any[]} container
- * @returns {number} -1: unshift, Infinity: push, others: split
+ * @returns {number} -1: unshift, size: push, others: split
  */
 function findInsertIndex(item, container, comparator) {
     let size = container.length;
@@ -604,7 +604,7 @@ function findInsertIndex(item, container, comparator) {
     if (size === 0) {
         // If the container is empty, should push the new item into the end of
         // the container directly.
-        return Infinity;
+        return size;
     } else {
         let res = comparator(item, container[0]);
 
@@ -620,7 +620,7 @@ function findInsertIndex(item, container, comparator) {
             // larger than it, or the new item is larger than the last item in
             // the container, should push the new item into the end of the 
             // container.
-            return Infinity;
+            return size;
         } else {
             let index = size - 1;
             let dec = 0;
