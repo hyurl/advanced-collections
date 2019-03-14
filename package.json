@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Advanced collections like BiMap, SortedMap and SortedSet.",
   "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "mocha"
   },
@@ -26,6 +27,7 @@
     "literal-toolkit": "^1.2.7"
   },
   "devDependencies": {
+    "@types/node": "^11.11.3",
     "mocha": "^6.0.2"
   }
 }
