@@ -132,4 +132,34 @@ describe("SortedSet", () => {
     it("should pass instanceof checking as expected", () => {
         assert.ok(new SortedSet() instanceof Set);
     });
+
+    it("should create a asc sorted set with objects as expected", () => {
+        var set = new SortedSet([
+            { k: 1, v: "A" },
+            { k: 2, v: "B" },
+            { k: 3, v: "C" },
+            { k: 4, v: "D" }
+        ], (a, b) => (a.k - b.k));
+
+
+        set.add({ k: 2, v: "E" })
+            .add({ k: 2, v: "F" })
+            .add({ k: 1, v: "G" })
+            .add({ k: 3, v: "H" })
+            .add({ k: 6, v: "I" })
+            .add({ k: 5, v: "J" });
+
+        assert.deepStrictEqual(set[utils.values], [
+            { k: 1, v: 'A' },
+            { k: 1, v: 'G' },
+            { k: 2, v: 'B' },
+            { k: 2, v: 'E' },
+            { k: 2, v: 'F' },
+            { k: 3, v: 'C' },
+            { k: 3, v: 'H' },
+            { k: 4, v: 'D' },
+            { k: 5, v: 'J' },
+            { k: 6, v: 'I' }
+        ]);
+    });
 });

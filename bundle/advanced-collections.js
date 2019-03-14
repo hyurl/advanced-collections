@@ -314,7 +314,7 @@ exports.BiMap = BiMap;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 
-const { keys, values, fixToStringTag } = __webpack_require__(/*! ./utils */ "./lib/utils.js");
+const { keys, values, findInsertIndex, fixToStringTag } = __webpack_require__(/*! ./utils */ "./lib/utils.js");
 const { BaseMap } = __webpack_require__(/*! ./base-map */ "./lib/base-map.js");
 
 /**
@@ -340,33 +340,17 @@ class SortedMap extends BaseMap {
         if (i !== -1) {
             this[values][i] = value;
         } else {
-            let size = this.size;
+            let index = findInsertIndex(key, this[keys], this.comparator);
 
-            if (size === 0) {
+            if (index === -1) {
+                this[keys].unshift(key);
+                this[values].unshift(value);
+            } else if (index === Infinity) {
                 this[keys].push(key);
                 this[values].push(value);
             } else {
-                let res = this.comparator(key, this[keys][0]);
-
-                if (res < 0) {
-                    this[keys].unshift(key);
-                    this[values].unshift(value);
-                } else if (
-                    size === 1 ||
-                    (res = this.comparator(key, this[keys][size - 1])) >= 0
-                ) {
-                    this[keys].push(key);
-                    this[values].push(value);
-                } else {
-                    this[keys].push(key);
-                    this[keys].sort(this.comparator);
-
-                    let i = this[keys].indexOf(key);
-                    let values1 = this[values].splice(0, i);
-
-                    values1.push(value);
-                    this[values] = values1.concat(this[values]);
-                }
+                this[keys].splice(index, 0, key);
+                this[values].splice(index, 0, value);
             }
         }
 
@@ -406,6 +390,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const {
     values,
     throwNotIterableError,
+    findInsertIndex,
     inherit,
     fixToStringTag
 } = __webpack_require__(/*! ./utils */ "./lib/utils.js");
@@ -440,24 +425,14 @@ class SortedSet {
 
     add(value) {
         if (!this.has(value)) {
-            let size = this.size;
+            let index = findInsertIndex(value, this[values], this.comparator);
 
-            if (size === 0) {
+            if (index === -1) {
+                this[values].unshift(value);
+            } else if (index === Infinity) {
                 this[values].push(value);
             } else {
-                let res = this.comparator(value, this[values][0]);
-
-                if (res < 0) {
-                    this[values].unshift(value);
-                } else if (
-                    size === 1 ||
-                    (res = this.comparator(value, this[values][size - 1])) >= 0
-                ) {
-                    this[values].push(value);
-                } else {
-                    this[values].push(value);
-                    this[values].sort(this.comparator);
-                }
+                this[values].splice(index, 0, value);
             }
         }
 
@@ -619,6 +594,59 @@ function throwNotIterableError(input) {
     throw new TypeError(`${labelize(input)} is not iterable`);
 }
 
+/**
+ * @param {any[]} container
+ * @returns {number} -1: unshift, Infinity: push, others: split
+ */
+function findInsertIndex(item, container, comparator) {
+    let size = container.length;
+
+    if (size === 0) {
+        // If the container is empty, should push the new item into the end of
+        // the container directly.
+        return Infinity;
+    } else {
+        let res = comparator(item, container[0]);
+
+        if (res < 0) {
+            // If new item is smaller than the the first item in the container,
+            // should put/unshift the new item into the head of the container.
+            return -1;
+        } else if (
+            size === 1 ||
+            (res = comparator(item, container[size - 1])) >= 0
+        ) {
+            // If there is only one item in the container and the new item is
+            // larger than it, or the new item is larger than the last item in
+            // the container, should push the new item into the end of the 
+            // container.
+            return Infinity;
+        } else {
+            let index = size - 1;
+            let dec = 0;
+            let res = 0;
+
+            // Finding the index via dichotomy.
+            while (size = size / 2) {
+                dec = Math.floor(size);
+                size = Math.ceil(size);
+                index -= dec;
+                res = comparator(item, container[index]);
+
+                if (size === 1) {
+                    return res === -1 ? index : index + 1;
+
+                    // When a specific index is returned, the caller should 
+                    // insert the new item to the index of the container via the
+                    // splice method.
+                } else if (res >= 0) {
+                    index += dec;
+                }
+            }
+        }
+    }
+}
+
 module.exports = {
     keys: Symbol("keys"),
     values: Symbol("values"),
@@ -626,7 +654,8 @@ module.exports = {
     labelize,
     fixToStringTag,
     throwNotEntryError,
-    throwNotIterableError
+    throwNotIterableError,
+    findInsertIndex
 };
 
 /***/ }),

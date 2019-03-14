@@ -3,6 +3,7 @@ export declare namespace utils {
     const values: symbol;
     function inherit<T, S>(ctor: T, base: S): S & T;
     function labelize(value: any): string;
+    function findInsertIndex<T>(item: T, container: T[], comparator?: (a: T, b: T) => -1 | 0 | 1): number;
     function fixToStringTag<T>(ctor: T): T;
     function throwNotEntryError(item: any): never;
     function throwNotIterableError(input: any): never;
