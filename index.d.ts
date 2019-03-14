@@ -3,6 +3,7 @@ export declare namespace utils {
     const values: symbol;
     function inherit<T, S>(ctor: T, base: S): S & T;
     function labelize(value: any): string;
+    function fixToStringTag<T>(ctor: T): T;
     function throwNotEntryError(item: any): never;
     function throwNotIterableError(input: any): never;
 }
