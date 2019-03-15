@@ -314,7 +314,13 @@ exports.BiMap = BiMap;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 
-const { keys, values, findInsertIndex, fixToStringTag } = __webpack_require__(/*! ./utils */ "./lib/utils.js");
+const {
+    keys,
+    values,
+    defaultComparator,
+    findInsertIndex,
+    fixToStringTag
+} = __webpack_require__(/*! ./utils */ "./lib/utils.js");
 const { BaseMap } = __webpack_require__(/*! ./base-map */ "./lib/base-map.js");
 
 /**
@@ -325,7 +331,7 @@ class SortedMap extends BaseMap {
      * @param {Iterable<[any, any]>} iterable 
      * @param {(a: any, b: any) => -1 | 0 | 1} comparator
      */
-    constructor(iterable, comparator = (a, b) => String(a) - String(b)) {
+    constructor(iterable, comparator = defaultComparator) {
         if (typeof iterable === "function") {
             comparator = iterable;
             iterable = [];
@@ -389,6 +395,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 
 const {
     values,
+    defaultComparator,
     throwNotIterableError,
     findInsertIndex,
     inherit,
@@ -403,7 +410,7 @@ class SortedSet {
      * @param {Iterable<any>} iterable 
      * @param {(a: any, b: any) => -1 | 0 | 1} comparator
      */
-    constructor(iterable, comparator = (a, b) => String(a) - String(b)) {
+    constructor(iterable, comparator = defaultComparator) {
         if (typeof iterable === "function") {
             comparator = iterable;
             iterable = [];
@@ -647,6 +654,24 @@ function findInsertIndex(item, container, comparator) {
     }
 }
 
+function defaultComparator(a, b) {
+    let aType = typeof a;
+    let bType = typeof b;
+
+    if (aType === bType) {
+        if (aType === "number" || aType === "bigint") {
+            return Number(a - b);
+        } else if (aType === "string" || aType === "boolean") {
+            return a > b ? 1 : (a < b ? -1 : 0);
+        }
+    }
+
+    a = String(a);
+    b = String(b);
+
+    return a > b ? 1 : (a < b ? -1 : 0);
+}
+
 module.exports = {
     keys: Symbol("keys"),
     values: Symbol("values"),
@@ -655,7 +680,8 @@ module.exports = {
     fixToStringTag,
     throwNotEntryError,
     throwNotIterableError,
-    findInsertIndex
+    findInsertIndex,
+    defaultComparator
 };
 
 /***/ }),
