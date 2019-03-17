@@ -1,6 +1,6 @@
 # Advanced-Collections
 
-**Advanced collections like BiMap, SortedMap and SortedSet.**
+**Advanced collections include BiMap, SortedMap and SortedSet.**
 
 ## API declarations
 

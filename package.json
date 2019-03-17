@@ -1,7 +1,7 @@
 {
   "name": "advanced-collections",
   "version": "0.1.0",
-  "description": "Advanced collections like BiMap, SortedMap and SortedSet.",
+  "description": "Advanced collections include BiMap, SortedMap and SortedSet.",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
