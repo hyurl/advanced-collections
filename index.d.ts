@@ -1,6 +1,6 @@
 export declare namespace utils {
-    const keys: symbol;
-    const values: symbol;
+    const keys: unique symbol;
+    const values: unique symbol;
     function inherit<T, S>(ctor: T, base: S): S & T;
     function labelize(value: any): string;
     function findInsertIndex<T>(item: T, container: T[], comparator: (a: T, b: T) => number): number;
@@ -12,13 +12,14 @@ export declare namespace utils {
 export declare abstract class BaseMap<K, V> extends Map<K, V> {
     protected [utils.keys]: K[];
     protected [utils.values]: V[];
-    constructor(iterable: Iterable<K, V>, props?: any);
+    constructor(iterable: Iterable<[K, V]>, props?: any);
     protected removeByIndex(index: number): boolean;
     abstract set(key: K, value: V): this;
 }
 
 export declare class BiMap<K = any, V = any> extends BaseMap<K, V> {
     constructor(iterable?: Iterable<[K, V]>);
+    set(key: K, value: V): this;
     getKey(value: V): K;
     hasValue(value: V): boolean;
     deleteValue(value: V): boolean;
@@ -29,7 +30,8 @@ export declare class BiMap<K = any, V = any> extends BaseMap<K, V> {
 export declare class SortedMap<K = any, V = any> extends BaseMap<K, V> {
     protected comparator: (a: K, b: K) => number;
     constructor(comparator?: (a: K, b: K) => number);
-    constructor(iterable: Iterable<[K, V]>, comparator?: (a: K, b: k) => number);
+    constructor(iterable: Iterable<[K, V]>, comparator?: (a: K, b: K) => number);
+    set(key: K, value: V): this;
     reverse(): SortedMap<K, V>;
     forEach(callback: (value: V, key: K, map: SortedMap<K, V>) => void, thisArg?: any): void;
 }
