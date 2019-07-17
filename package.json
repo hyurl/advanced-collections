@@ -1,6 +1,6 @@
 {
   "name": "advanced-collections",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Advanced collections include BiMap, SortedMap and SortedSet.",
   "main": "index.js",
   "types": "index.d.ts",
@@ -24,12 +24,12 @@
   },
   "homepage": "https://github.com/hyurl/advanced-collections#readme",
   "dependencies": {
-    "literal-toolkit": "^1.2.7"
+    "literal-toolkit": "^1.2.10"
   },
   "devDependencies": {
-    "@types/node": "^11.11.3",
-    "mocha": "^6.0.2",
-    "webpack": "^4.29.6",
-    "webpack-cli": "^3.2.3"
+    "@types/node": "^11.13.17",
+    "mocha": "^6.1.4",
+    "webpack": "^4.36.1",
+    "webpack-cli": "^3.3.6"
   }
 }
